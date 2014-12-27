@@ -7,10 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid Background="#00000000">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="50" >
+        <!--StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="50" >
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="42" Height="72" Text="gl2dx" Margin="5"/>
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="18" Height="72" Text="drawn with XAML" Margin="2"/>
-        </StackPanel>
+        </StackPanel-->
         <TextBlock x:Name="FpsLabel" Visibility="Visible" Text="FPS: 60" TextWrapping="Wrap" Height="31" FontSize="20" TextAlignment="Left" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,19,10,0"/>
 
     </Grid>
