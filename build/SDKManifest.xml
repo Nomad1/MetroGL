@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<FileList
+	DisplayName="MetroGL Library"
+	TargetFramework=".NETCore, version=v4.5"
+	DependsOn="Microsoft.VCLibs, version=11.0"
+	MinVSVersion="11.0"
+	SupportedArchitectures="x86;x64;ARM"
+	AppliesTo="WindowsAppContainer + ( Managed | Native )"
+  >
+
+  <File Reference = "MetroGL.winmd" Implementation = "MetroGL.dll"/>
+  <File Reference = "OpenGLColorPS.cso"/>
+  <File Reference = "OpenGLTexturePS.cso"/>
+  <File Reference = "OpenGLVS.cso"/>
+</FileList>
