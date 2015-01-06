@@ -21,15 +21,16 @@
 
 #include <d3d11_1.h>
 
-#include <wrl/client.h>
 #include <memory>
-#include <wrl/client.h>
 #include <DirectXMath.h>
 
 #include <memory>
-#include <agile.h>
 
+#if defined(__cplusplus_winrt)
+#include <wrl/client.h>
+#include <agile.h>
 #include "AsyncHelper.h"
+#endif
 
 #include "WICTextureLoader.h"
 #include "DDSTextureLoader.h"
@@ -69,6 +70,7 @@ namespace gl2dx
 
         auto vsize = sizeof (this->_batchVertices);
 
+#if defined(__cplusplus_winrt)
         // Asynchronously load the vertex and pixel shaders
         auto loadVSTask = ReadDataAsync("OpenGLVS.cso");
         auto loadPSColorTask = ReadDataAsync("OpenGLColorPS.cso");
@@ -137,6 +139,87 @@ namespace gl2dx
         createPSTextureTask.then([this] () {
             _loadingComplete = true;
         });
+#else
+        const DWORD shaderBufferLength = 0x10000;
+        char shaderBuffer[shaderBufferLength]; 
+
+        HRESULT hr;
+        BOOL read;
+        DWORD shaderLength;
+        HANDLE file;
+
+        file = CreateFile2(L"OpenGLVS.cso", GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+        read = ReadFile(file, shaderBuffer, shaderBufferLength, &shaderLength, NULL);
+        CloseHandle(file);
+
+        assert(read && shaderLength != 0);
+
+        hr = _device->CreateVertexShader(
+                shaderBuffer,
+                shaderLength,
+                nullptr,
+                &_vertexShader
+                );
+
+        assert(hr == S_OK);
+
+        const D3D11_INPUT_ELEMENT_DESC vertexDesc[] = 
+        {
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        }; 
+
+        hr = _device->CreateInputLayout(
+                vertexDesc,
+                ARRAYSIZE(vertexDesc),
+                shaderBuffer,
+                shaderLength,
+                &_inputLayout
+                );
+
+        assert(hr == S_OK);
+
+        file = CreateFile2(L"OpenGLColorPS.cso", GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+        read = ReadFile(file, shaderBuffer, shaderBufferLength, &shaderLength, NULL);
+        CloseHandle(file);
+
+        assert(read && shaderLength != 0);
+
+        hr = _device->CreatePixelShader(
+                shaderBuffer,
+                shaderLength,
+                nullptr,
+                &_pixelShaderColor
+                );
+
+        assert(hr == S_OK);
+
+        file = CreateFile2(L"OpenGLTexturePS.cso", GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+        read = ReadFile(file, shaderBuffer, shaderBufferLength, &shaderLength, NULL);
+        CloseHandle(file);
+
+        assert(read && shaderLength != 0);
+
+        hr = _device->CreatePixelShader(
+                shaderBuffer,
+                shaderLength,
+                nullptr,
+                &_pixelShaderTexture
+                );
+
+        assert(hr == S_OK);
+
+        hr = _device->CreateBuffer(
+                &CD3D11_BUFFER_DESC(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER),
+                nullptr,
+                &_constantBuffer
+                );
+
+        assert(hr == S_OK);
+
+        _loadingComplete = true;
+#endif
 
         ZeroMemory(&_rasterizerDesc, sizeof(_rasterizerDesc));
         _rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
@@ -680,7 +763,7 @@ namespace gl2dx
     {
         auto matrix4x4 = _matrices.top();
         DirectX::XMMATRIX matrix = DirectX::XMLoadFloat4x4(matrix4x4);
-        DirectX::XMVECTORF32 axis = {x, y, z, 0};
+        DirectX::XMVECTOR axis = DirectX::XMVectorSet(x, y, z, 0);
         DirectX::XMMATRIX rotation = DirectX::XMMatrixRotationAxis(axis, angle * 3.14159265359f / 180.f);
         auto newMatrix = DirectX::XMMatrixMultiply(rotation, matrix);
         DirectX::XMStoreFloat4x4(matrix4x4, newMatrix);

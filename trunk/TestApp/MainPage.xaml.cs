@@ -4,8 +4,6 @@ using MetroGL;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace TestApp
 {
     /// <summary>
@@ -14,12 +12,10 @@ namespace TestApp
     public sealed partial class MainPage
     {
         private readonly OpenGL m_gl;
-        private float m_angle;
         private int m_textureId1;
         private int m_textureId2;
         private float m_height;
         private float m_width;
-        private int m_frames;
 
         private float m_updateFps;
         private int m_lastFrameUpdate;

@@ -1,11 +1,11 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
   <Metadata>
-    <Identity Id="MetroGLLibrary.3fd0c0bd-b9c4-48cc-a854-86c4e04ed76e" Version="0.4.3" Language="en-US" Publisher="Alexei Garbuzenko (Nomad)" />
+    <Identity Id="MetroGLLibrary.3fd0c0bd-b9c4-48cc-a854-86c4e04ed76e" Version="0.4.4" Language="en-US" Publisher="Alexei Garbuzenko (Nomad)" />
     <DisplayName>MetroGL Library</DisplayName>
     <Description xml:space="preserve">MetroGL Library</Description>
   </Metadata>
   <Installation Scope="Global">
-    <InstallationTarget Id="Microsoft.ExtensionSDK" TargetPlatformIdentifier="Windows" TargetPlatformVersion="v8.0" SdkName="MetroGL Library" SdkVersion="0.4.3" />
+    <InstallationTarget Id="Microsoft.ExtensionSDK" TargetPlatformIdentifier="Windows" TargetPlatformVersion="v8.0" SdkName="MetroGL Library" SdkVersion="0.4.4" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5" />
