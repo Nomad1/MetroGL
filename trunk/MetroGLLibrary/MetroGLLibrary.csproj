@@ -45,7 +45,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="redist\debug\ARM64\MetroGL.dll" />
     <Content Include="redist\debug\ARM\MetroGL.dll" />
+    <Content Include="redist\retail\ARM64\MetroGL.dll" />
     <Content Include="references\CommonConfiguration\neutral\MetroGL.winmd">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
