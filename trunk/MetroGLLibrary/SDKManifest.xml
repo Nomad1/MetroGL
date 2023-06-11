@@ -2,9 +2,9 @@
 <FileList
 	DisplayName="MetroGL Library"
 	TargetFramework=".NETCore, version=v4.5"
-	DependsOn="Microsoft.VCLibs, version=11.0"
-	MinVSVersion="11.0"
-	SupportedArchitectures="x86;x64;ARM"
+	DependsOn="Microsoft.VCLibs, version=14.0"
+	MinVSVersion="14.0"
+	SupportedArchitectures="x86;x64;ARM;ARM64"
 	AppliesTo="WindowsAppContainer + ( Managed | Native )"
   >
 
