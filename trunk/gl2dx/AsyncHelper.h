@@ -22,7 +22,7 @@
 #include <ppl.h>
 #include <ppltasks.h>
 
-namespace gl2dx
+namespace dx2gl
 {
    inline void ThrowIfFailed(HRESULT hr)
    {

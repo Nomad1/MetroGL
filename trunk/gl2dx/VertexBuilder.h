@@ -18,8 +18,17 @@
 //-----------------------------------------------------------------------------------------------
 #pragma once
 
-#include "gl2dx.h"
+#include "gl.h"
+#include "OpenGLVertex.h"
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
 #include <list>
+
+#include "gl.h"
+#include "GL2DXException.h"
+#include "OpenGLVertex.h"
 
 namespace gl2dx
 {

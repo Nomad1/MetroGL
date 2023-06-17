@@ -9,8 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MetroGL", "MetroGL\MetroGL.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroGLLibrary", "MetroGLLibrary\MetroGLLibrary.csproj", "{C1896813-2758-4B94-8D23-370277DF2C52}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gl2dx", "gl2dx\gl2dx.vcxproj", "{44A99352-D801-406E-A06D-CC0C1225048D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -67,22 +65,6 @@ Global
 		{C1896813-2758-4B94-8D23-370277DF2C52}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{C1896813-2758-4B94-8D23-370277DF2C52}.Release|x64.ActiveCfg = Release|Any CPU
 		{C1896813-2758-4B94-8D23-370277DF2C52}.Release|x86.ActiveCfg = Release|Any CPU
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|ARM.ActiveCfg = Debug|ARM
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|ARM.Build.0 = Debug|ARM
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|ARM64.Build.0 = Debug|ARM64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|x64.ActiveCfg = Debug|x64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|x64.Build.0 = Debug|x64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|x86.ActiveCfg = Debug|Win32
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Debug|x86.Build.0 = Debug|Win32
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|ARM.ActiveCfg = Release|ARM
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|ARM.Build.0 = Release|ARM
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|ARM64.ActiveCfg = Release|ARM64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|ARM64.Build.0 = Release|ARM64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|x64.ActiveCfg = Release|x64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|x64.Build.0 = Release|x64
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|x86.ActiveCfg = Release|Win32
-		{44A99352-D801-406E-A06D-CC0C1225048D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

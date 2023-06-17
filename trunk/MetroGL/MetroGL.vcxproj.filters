@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="DirectXBase.cpp" />
+    <ClCompile Include="OpenGL.cpp" />
+    <ClCompile Include="gl2dx\DXOpenGL.cpp">
+      <Filter>gl2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="gl2dx\VertexBuilder.cpp">
+      <Filter>gl2dx</Filter>
+    </ClCompile>
+    <ClCompile Include="gl2dx\DDSTextureLoader.cpp">
+      <Filter>gl2dx\Textures</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Enums.h" />
+    <ClInclude Include="OpenGL.h" />
+    <ClInclude Include="gl2dx\AsyncHelper.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\DXOpenGL.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\gl.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\GL2DXException.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\OpenGLVertex.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\VertexBuilder.h">
+      <Filter>gl2dx</Filter>
+    </ClInclude>
+    <ClInclude Include="gl2dx\DDSTextureLoader.h">
+      <Filter>gl2dx\Textures</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="gl2dx">
+      <UniqueIdentifier>{d488e4b6-d9af-478a-970d-981f9fa7b018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gl2dx\Textures">
+      <UniqueIdentifier>{3772305f-51f5-42a5-8e77-ea3015e15c4a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

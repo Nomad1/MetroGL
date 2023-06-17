@@ -16,8 +16,15 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //-----------------------------------------------------------------------------------------------
-#include "pch.h"
-#include "DirectXBase.h" 
+#include <d3d11_1.h>
+//#include <d2d1_1.h>
+//#include <d2d1effects.h>
+#include <dwrite_1.h>
+#include <wincodec.h>
+#include <agile.h>
+#include <DirectXMath.h>
+#include "Enums.h"
+#include "OpenGL.h" 
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <math.h>
 
@@ -26,20 +33,22 @@ using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
-using namespace D2D1;
+//using namespace D2D1;
+using namespace Windows::UI::ViewManagement;
 
-// Constructor.
-DirectXBase::DirectXBase() :
-   m_dpi(-1.0f)
-#ifdef WIN8
-   ,
-   m_viewState(ApplicationViewState::FullScreenLandscape)
-#endif
+using namespace MetroGL;
+
+
+void ThrowIfFailed(HRESULT hr)
 {
+    if (FAILED(hr))
+    {
+        // Set a breakpoint on this line to catch Win32 API errors.
+        throw Platform::Exception::CreateException(hr);
+    }
 }
-
 // Initialize the DirectX resources required to run.
-void DirectXBase::Initialize(CoreWindow^ window, SwapChainBackgroundPanel^ panel, float dpi)
+void OpenGL::Initialize(CoreWindow^ window, SwapChainPanel^ panel, float dpi)
 {
    m_window = window;
    m_panel = panel;
@@ -50,8 +59,9 @@ void DirectXBase::Initialize(CoreWindow^ window, SwapChainBackgroundPanel^ panel
 }
 
 // These are the resources required independent of the device.
-void DirectXBase::CreateDeviceIndependentResources()
+void OpenGL::CreateDeviceIndependentResources()
 {
+    /*
    D2D1_FACTORY_OPTIONS options;
    ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 
@@ -60,7 +70,7 @@ void DirectXBase::CreateDeviceIndependentResources()
    //options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
 
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       D2D1CreateFactory(
          D2D1_FACTORY_TYPE_SINGLE_THREADED,
          __uuidof(ID2D1Factory1),
@@ -68,8 +78,9 @@ void DirectXBase::CreateDeviceIndependentResources()
          &m_d2dFactory
          )
       );
-
-   DX::ThrowIfFailed(
+   */
+    /*
+   ThrowIfFailed(
       DWriteCreateFactory(
          DWRITE_FACTORY_TYPE_SHARED,
          __uuidof(IDWriteFactory),
@@ -77,18 +88,18 @@ void DirectXBase::CreateDeviceIndependentResources()
          )
       );
 
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       CoCreateInstance(
          CLSID_WICImagingFactory,
          nullptr,
          CLSCTX_INPROC_SERVER,
          IID_PPV_ARGS(&m_wicFactory)
          )
-      );
+      );*/
 }
 
 // These are the resources that depend on the device.
-void DirectXBase::CreateDeviceResources()
+void OpenGL::InternalCreateDeviceResources()
 {
    // This flag adds support for surfaces with a different color channel ordering than the API default.
    // It is recommended usage, and is required for compatibility with Direct2D.
@@ -118,7 +129,7 @@ void DirectXBase::CreateDeviceResources()
    // Create the DX11 API device object, and get a corresponding context.
    ComPtr<ID3D11Device> device;
    ComPtr<ID3D11DeviceContext> context;
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       D3D11CreateDevice(
          nullptr,                    // specify null to use the default adapter
          D3D_DRIVER_TYPE_HARDWARE,
@@ -134,40 +145,40 @@ void DirectXBase::CreateDeviceResources()
       );
 
    // Get the DirectX11.1 device by QI off the DirectX11 one.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       device.As(&m_d3dDevice)
       );
 
    // And get the corresponding device context in the same way.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       context.As(&m_d3dContext)
       );
 
    // Obtain the underlying DXGI device of the Direct3D11.1 device.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d3dDevice.As(&dxgiDevice)
       );
-
+   /*
    // Obtain the Direct2D device for 2-D rendering.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d2dFactory->CreateDevice(dxgiDevice.Get(), &m_d2dDevice)
       );
 
    // And get its corresponding device context object.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d2dDevice->CreateDeviceContext(
          D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
          &m_d2dContext
          )
       );
-
+      */
    // Release the swap chain (if it exists) as it will be incompatible with the new device.
    m_swapChain = nullptr;
 }
 
 // Helps track the DPI in the helper class.
 // This is called in the dpiChanged event handler in the view class.
-void DirectXBase::SetDpi(float dpi)
+void OpenGL::SetDpi(float dpi)
 {
    if (dpi != m_dpi)
    {
@@ -175,7 +186,7 @@ void DirectXBase::SetDpi(float dpi)
       m_dpi = dpi;
       
       // Update Direct2D's stored DPI.
-      m_d2dContext->SetDpi(m_dpi, m_dpi);
+     // m_d2dContext->SetDpi(m_dpi, m_dpi);
 
       // Often a DPI change implies a window size change. In some cases Windows will issues
       // both a size changed event and a DPI changed event. In this case, the resulting bounds 
@@ -185,7 +196,7 @@ void DirectXBase::SetDpi(float dpi)
 }
 
 // This routine is called in the event handler for the view SizeChanged event.
-void DirectXBase::UpdateForWindowSizeChange()
+void OpenGL::UpdateForWindowSizeChange()
 {
    // Only handle window size changed if there is no pending DPI change.
    if (m_dpi != DisplayProperties::LogicalDpi)
@@ -194,8 +205,8 @@ void DirectXBase::UpdateForWindowSizeChange()
    if (m_window->Bounds.Width  != m_windowBounds.Width ||
       m_window->Bounds.Height != m_windowBounds.Height)
    {
-      m_d2dContext->SetTarget(nullptr);
-      m_d2dTargetBitmap = nullptr;
+     // m_d2dContext->SetTarget(nullptr);
+     // m_d2dTargetBitmap = nullptr;
       m_renderTargetView = nullptr;
       m_depthStencilView = nullptr;
       CreateWindowSizeDependentResources();
@@ -203,7 +214,7 @@ void DirectXBase::UpdateForWindowSizeChange()
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
-void DirectXBase::CreateWindowSizeDependentResources()
+void OpenGL::InternalCreateWindowSizeDependentResources()
 {
    // Store the window bounds so the next time we get a SizeChanged event we can
    // avoid rebuilding everything if the size is identical.
@@ -216,7 +227,7 @@ void DirectXBase::CreateWindowSizeDependentResources()
    // If the swap chain already exists, resize it.
    if (m_swapChain != nullptr)
    {
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          m_swapChain->ResizeBuffers(
             2,
             static_cast<UINT>(m_renderTargetSize.Width),
@@ -247,24 +258,24 @@ void DirectXBase::CreateWindowSizeDependentResources()
 
       // First, retrieve the underlying DXGI Device from the D3D Device.
       ComPtr<IDXGIDevice1> dxgiDevice;
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          m_d3dDevice.As(&dxgiDevice)
          );
 
       // Identify the physical adapter (GPU or card) this device is running on.
       ComPtr<IDXGIAdapter> dxgiAdapter;
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          dxgiDevice->GetAdapter(&dxgiAdapter)
          );
 
       // And obtain the factory object that created it.
       ComPtr<IDXGIFactory2> dxgiFactory;
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory))
          );
 
       // Create the swap chain and then associate it with the SwapChainBackgroundPanel.
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          dxgiFactory->CreateSwapChainForComposition(
             m_d3dDevice.Get(),
             &swapChainDesc,
@@ -273,31 +284,31 @@ void DirectXBase::CreateWindowSizeDependentResources()
             )
          );
 
-      ComPtr<ISwapChainBackgroundPanelNative> panelNative;
-      DX::ThrowIfFailed(
+      ComPtr<ISwapChainPanelNative> panelNative;
+      ThrowIfFailed(
          reinterpret_cast<IUnknown*>(m_panel)->QueryInterface(IID_PPV_ARGS(&panelNative))
          );
       
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          panelNative->SetSwapChain(m_swapChain.Get())
          );
 
       // Ensure that DXGI does not queue more than one frame at a time. This both reduces 
       // latency and ensures that the application will only render after each VSync, minimizing 
       // power consumption.
-      DX::ThrowIfFailed(
+      ThrowIfFailed(
          dxgiDevice->SetMaximumFrameLatency(1)
          );
    }
 
    // Obtain the backbuffer for this window which will be the final 3D rendertarget.
    ComPtr<ID3D11Texture2D> backBuffer;
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer))
       );
 
    // Create a view interface on the rendertarget to use on bind.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d3dDevice->CreateRenderTargetView(
          backBuffer.Get(),
          nullptr,
@@ -317,7 +328,7 @@ void DirectXBase::CreateWindowSizeDependentResources()
 
    // Allocate a 2-D surface as the depth/stencil buffer.
    ComPtr<ID3D11Texture2D> depthStencil;
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d3dDevice->CreateTexture2D(
          &depthStencilDesc,
          nullptr,
@@ -327,7 +338,7 @@ void DirectXBase::CreateWindowSizeDependentResources()
 
    // Create a DepthStencil view on this surface to use on bind.
    CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d3dDevice->CreateDepthStencilView(
          depthStencil.Get(),
          &depthStencilViewDesc,
@@ -345,26 +356,26 @@ void DirectXBase::CreateWindowSizeDependentResources()
 
    // Set the current viewport using the descriptor.
    m_d3dContext->RSSetViewports(1, &viewport);
-
+   /*
    // Now we set up the Direct2D render target bitmap linked to the swapchain. 
    // Whenever we render to this bitmap, it will be directly rendered to the 
    // swapchain associated with the window.
    D2D1_BITMAP_PROPERTIES1 bitmapProperties = 
       BitmapProperties1(
          D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-         PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
          m_dpi,
          m_dpi
          );
 
    // Direct2D needs the DXGI version of the backbuffer surface pointer.
    ComPtr<IDXGISurface> dxgiBackBuffer;
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer))
       );
 
    // Get a D2D surface from the DXGI back buffer to use as the D2D render target.
-   DX::ThrowIfFailed(
+   ThrowIfFailed(
       m_d2dContext->CreateBitmapFromDxgiSurface(
          dxgiBackBuffer.Get(),
          &bitmapProperties,
@@ -377,8 +388,9 @@ void DirectXBase::CreateWindowSizeDependentResources()
 
    // Set D2D text anti-alias mode to Grayscale to ensure proper rendering of text on intermediate surfaces.
    m_d2dContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
-
+   */
    // Set the blend function.
+   /*
    ID3D11BlendState* g_pBlendState = NULL;
    D3D11_BLEND_DESC blendDesc;
    ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
@@ -396,7 +408,7 @@ void DirectXBase::CreateWindowSizeDependentResources()
    blendDesc.RenderTarget[0] = rtBlendDesc;
 
    auto hr1 = m_d3dDevice->CreateBlendState(&blendDesc, &g_pBlendState);
-   m_d3dContext->OMSetBlendState(g_pBlendState, 0, 0xffffffff);
+   m_d3dContext->OMSetBlendState(g_pBlendState, 0, 0xffffffff);*/
 
    D3D11_DEPTH_STENCIL_DESC dsDesc;
    // Depth test parameters
@@ -425,11 +437,58 @@ void DirectXBase::CreateWindowSizeDependentResources()
    ID3D11DepthStencilState * pDSState;
    m_d3dDevice->CreateDepthStencilState(&dsDesc, &pDSState);
    m_d3dContext->OMSetDepthStencilState(pDSState, 1);
+
+   /// Render To Texture for special mode
+    // Initialize the  texture description.
+
+   D3D11_TEXTURE2D_DESC textureDesc;
+   ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+   // Setup the texture description.
+   // We will have our map be a square
+   // We will need to have this texture bound as a render target AND a shader resource
+   textureDesc.Width = m_renderTargetSize.Width;
+   textureDesc.Height = m_renderTargetSize.Height;
+   textureDesc.MipLevels = 1;
+   textureDesc.ArraySize = 1;
+   textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+   textureDesc.SampleDesc.Count = 1;
+   textureDesc.Usage = D3D11_USAGE_DEFAULT;
+   textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+   textureDesc.CPUAccessFlags = 0;
+   textureDesc.MiscFlags = 0;
+
+   // Create the texture
+   m_d3dDevice->CreateTexture2D(&textureDesc, NULL, renderTargetTextureMap.GetAddressOf());
+
+   // RTT Render Target
+   // Setup the description of the render target view.
+   D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+   renderTargetViewDesc.Format = textureDesc.Format;
+   renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+   renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+   // Create the render target view.
+   m_d3dDevice->CreateRenderTargetView(renderTargetTextureMap.Get(), &renderTargetViewDesc, m_renderTargetViewTexture.GetAddressOf());
+
+   // RTT Shader Resource View
+    // Setup the description of the shader resource view.
+   D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+   shaderResourceViewDesc.Format = textureDesc.Format;
+   shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+   shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+   shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+   // Create the shader resource view.
+   m_d3dDevice->CreateShaderResourceView(renderTargetTextureMap.Get(), &shaderResourceViewDesc, shaderResourceViewMap.GetAddressOf());
 }
 
 // Method to deliver the final image to the display.
-void DirectXBase::Present()
+void OpenGL::Present()
 {
+    ID3D11ShaderResourceView* nosrvs[1] = { 0 };
+    m_d3dContext->PSSetShaderResources(0, 1, nosrvs);
+
    // The application may optionally specify "dirty" or "scroll" rects to improve efficiency
    // in certain scenarios.
    DXGI_PRESENT_PARAMETERS parameters = {0};
@@ -451,24 +510,25 @@ void DirectXBase::Present()
    }
    else
    {
-      DX::ThrowIfFailed(hr);
+      ThrowIfFailed(hr);
    }
 }
 
 // Method to convert a length in device-independent pixels (DIPs) to a length in physical pixels.
-float DirectXBase::ConvertDipsToPixels(float dips)
+float OpenGL::ConvertDipsToPixels(float dips)
 {
    static const float dipsPerInch = 96.0f;
-   return floor(dips * m_dpi / dipsPerInch + 0.5f); // Round to nearest integer.
+   return (float)floor(dips * m_dpi / dipsPerInch + 0.5f); // Round to nearest integer.
 }
 
+
 #ifdef WIN8
-void DirectXBase::SetApplicationViewState(ApplicationViewState viewState)
+void OpenGL::SetApplicationViewState(ApplicationViewState viewState)
 {
    m_viewState = viewState;
 }
 
-ApplicationViewState DirectXBase::GetApplicationViewState()
+ApplicationViewState OpenGL::GetApplicationViewState()
 {
    return m_viewState;
 }

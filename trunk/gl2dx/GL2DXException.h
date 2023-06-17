@@ -31,7 +31,10 @@ namespace gl2dx
          _message = message;
       }
 
-      const std::string& Message();
+      inline const std::string& Message()
+      {
+          return _message;
+      }
 
    private:
       std::string _message;
