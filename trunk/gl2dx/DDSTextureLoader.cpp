@@ -1344,7 +1344,7 @@ static HRESULT CreateTextureFromDDS(_In_ ID3D11Device* d3dDevice,
 			size_t numBytes = 0;
 			size_t rowBytes = 0;
 			GetSurfaceInfo(width, height, format, &numBytes, &rowBytes, nullptr);
-
+			
 			if (numBytes > bitSize)
 			{
 				(*textureView)->Release();

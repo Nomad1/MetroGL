@@ -169,7 +169,8 @@ namespace MetroGL
 
 		D3D_FEATURE_LEVEL                                      m_featureLevel;
 		Windows::Foundation::Size                              m_renderTargetSize;
-		Windows::Foundation::Rect                              m_windowBounds;
+		float													m_windowBoundsWidth;
+		float													m_windowBoundsHeight;
 		float                                                  m_dpi;
 #ifdef WIN8
 		ApplicationViewState                                   m_viewState;

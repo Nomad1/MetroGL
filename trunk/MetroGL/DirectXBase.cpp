@@ -117,12 +117,12 @@ void OpenGL::InternalCreateDeviceResources()
    // description.  All applications are assumed to support 9.1 unless otherwise stated.
    D3D_FEATURE_LEVEL featureLevels[] = 
    {
-      /*D3D_FEATURE_LEVEL_11_1,
+      D3D_FEATURE_LEVEL_11_1,
       D3D_FEATURE_LEVEL_11_0,
       D3D_FEATURE_LEVEL_10_1,
       D3D_FEATURE_LEVEL_10_0,
       D3D_FEATURE_LEVEL_9_3,
-      D3D_FEATURE_LEVEL_9_2,*/
+      D3D_FEATURE_LEVEL_9_2,
       D3D_FEATURE_LEVEL_9_1
    };
 
@@ -202,8 +202,8 @@ void OpenGL::UpdateForWindowSizeChange()
    if (m_dpi != DisplayProperties::LogicalDpi)
       return;
 
-   if (m_window->Bounds.Width  != m_windowBounds.Width ||
-      m_window->Bounds.Height != m_windowBounds.Height)
+   if (m_window->Bounds.Width  != m_windowBoundsWidth ||
+       m_window->Bounds.Height != m_windowBoundsHeight)
    {
      // m_d2dContext->SetTarget(nullptr);
      // m_d2dTargetBitmap = nullptr;
@@ -218,11 +218,12 @@ void OpenGL::InternalCreateWindowSizeDependentResources()
 {
    // Store the window bounds so the next time we get a SizeChanged event we can
    // avoid rebuilding everything if the size is identical.
-   m_windowBounds = m_window->Bounds;
+   m_windowBoundsWidth = (float)m_window->Bounds.Width;
+   m_windowBoundsHeight = (float)m_window->Bounds.Height;
 
    // Calculate the necessary swap chain and render target size in pixels.
-   m_renderTargetSize.Width = ConvertDipsToPixels(m_windowBounds.Width);
-   m_renderTargetSize.Height = ConvertDipsToPixels(m_windowBounds.Height);
+   m_renderTargetSize.Width = ConvertDipsToPixels(m_windowBoundsWidth);
+   m_renderTargetSize.Height = ConvertDipsToPixels(m_windowBoundsHeight);
 
    // If the swap chain already exists, resize it.
    if (m_swapChain != nullptr)
@@ -447,8 +448,8 @@ void OpenGL::InternalCreateWindowSizeDependentResources()
    // Setup the texture description.
    // We will have our map be a square
    // We will need to have this texture bound as a render target AND a shader resource
-   textureDesc.Width = m_renderTargetSize.Width;
-   textureDesc.Height = m_renderTargetSize.Height;
+   textureDesc.Width = static_cast<UINT>(m_renderTargetSize.Width);
+   textureDesc.Height = static_cast<UINT>(m_renderTargetSize.Height);
    textureDesc.MipLevels = 1;
    textureDesc.ArraySize = 1;
    textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -500,7 +501,7 @@ void OpenGL::Present()
    // The first argument instructs DXGI to block until VSync, putting the application
    // to sleep until the next VSync. This ensures we don't waste any cycles rendering
    // frames that will never be displayed to the screen.
-   HRESULT hr = m_swapChain->Present1(1, 0, &parameters);
+   HRESULT hr = m_swapChain->Present1(0, 0, &parameters);
 
    // If the device was removed either by a disconnect or a driver upgrade, we 
    // must completely reinitialize the renderer.

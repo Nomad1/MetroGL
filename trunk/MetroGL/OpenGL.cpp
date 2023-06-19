@@ -112,7 +112,7 @@ void OpenGL::Render()
 
 		m_d3dContext->OMSetBlendState(0, 0, 0xffffffff);
 
-		m_gl->DrawTextureNoBatch(0, 0, (int)m_renderTargetSize.Width, (int)m_renderTargetSize.Height, shaderResourceViewMap.Get());
+		m_gl->DrawTextureNoBatch(0, 0, (float)m_renderTargetSize.Width, (float)m_renderTargetSize.Height, shaderResourceViewMap.Get());
 	}
 	 else
 	{
