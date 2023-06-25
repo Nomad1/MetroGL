@@ -64,6 +64,8 @@ void OpenGL::Initialize(SwapChainPanel^ panel)
 
 void OpenGL::SetClearMask(int mask)
 {
+	if ((mask & 0x8000000) && !(_clearMask & 0x8000000)) // clear the temporary texture when first called special flag
+			m_d3dContext->ClearRenderTargetView(m_renderTargetViewTexture.Get(), _clearColorValue);
 	_clearMask = mask;
 }
 
